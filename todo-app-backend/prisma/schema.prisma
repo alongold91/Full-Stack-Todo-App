@@ -15,39 +15,20 @@ datasource db {
 }
 
 model User {
-  id        Int           @id @default(autoincrement())
+  id        Int    @id @default(autoincrement())
   firstName String
   lastName  String
-  email     String
+  email     String @unique
   password  String
   todos     Todo[]
-  projects  UserProject[]
 }
 
 model Todo {
-  id        Int     @id @default(autoincrement())
+  id        Int    @id @default(autoincrement())
   header    String
   content   String
-  status    String
-  user      User    @relation(fields: [userId], references: [id])
+  isDone    Boolean
+  user      User   @relation(fields: [userId], references: [id])
   userId    Int
-  project   Project @relation(fields: [projectId], references: [id])
   projectId Int
-}
-
-model Project {
-  id          Int           @id @default(autoincrement())
-  title       String
-  description String
-  users       UserProject[]
-  todos       Todo[]
-}
-
-model UserProject {
-  user      User    @relation(fields: [userId], references: [id])
-  userId    Int
-  project   Project @relation(fields: [projectId], references: [id])
-  projectId Int
-
-  @@id([userId, projectId]) // Composite primary key
 }
