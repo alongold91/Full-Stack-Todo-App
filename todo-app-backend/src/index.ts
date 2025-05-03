@@ -1,6 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import usersRouter from './routers/users';
+import session from 'express-session';
 
 const app = express();
 const PORT = 3000;
@@ -11,6 +12,12 @@ app.use(cors({
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
+
+app.use(session({
+  secret: 'test',
+  saveUninitialized: false,
+  resave: false
+}))
 
 // Parse JSON request bodies
 app.use(express.json());

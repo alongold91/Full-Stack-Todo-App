@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { PrismaClient } from '@prisma/client';
+import bcrypt from 'bcrypt';
 
 const prisma = new PrismaClient();
 
@@ -34,3 +35,24 @@ export const createUserSchema = z
   .refine((data) => data.password === data.confirmPassword, {
     message: "Passwords don't match"
   });
+
+export const loginUserSchema = z
+  .object({
+    email: z.string().min(1, 'Email is required').email('Invalid email format'),
+    password: z
+      .string()
+      .min(8, 'Password must be at least 8 characters')
+      .regex(/[A-Z]/, 'Password must contain at least one uppercase letter')
+      .regex(/[0-9]/, 'Password must contain at least one number')
+  })
+  .refine(
+    async (data) => {
+      const user = await prisma.user.findUnique({
+        where: { email: data.email }
+      });
+      if (!user) return false;
+      const match: boolean = await bcrypt.compare(data.password, user.password);
+      return match;
+    },
+    {path: ['password'],  message: 'Password is incorrect' }
+  );

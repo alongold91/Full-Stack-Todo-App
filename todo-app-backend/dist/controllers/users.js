@@ -13,6 +13,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.createUser = createUser;
+exports.loginUser = loginUser;
 const client_1 = require("@prisma/client");
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const http_status_codes_1 = require("http-status-codes");
@@ -39,3 +40,28 @@ function createUser(request, response) {
         }
     });
 }
+function loginUser(request, response) {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            const loggedInUser = yield prisma.user.findUnique({
+                where: { email: request.body.email }
+            });
+            if (loggedInUser && request.session) {
+                request.session.userId = loggedInUser.id;
+                response.status(http_status_codes_1.StatusCodes.OK).json({
+                    message: 'The user logged in successfully'
+                });
+            }
+            else
+                response.status(http_status_codes_1.StatusCodes.INTERNAL_SERVER_ERROR).json({
+                    error: 'Session service failed'
+                });
+        }
+        catch (error) {
+            response.status(http_status_codes_1.StatusCodes.INTERNAL_SERVER_ERROR).json({
+                error: 'Unexpected error'
+            });
+        }
+    });
+}
+//# sourceMappingURL=users.js.map

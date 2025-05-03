@@ -6,4 +6,6 @@ const usersSchema_1 = require("../middleware/shcemas/usersSchema");
 const validationMiddleware_1 = require("../middleware/validationMiddleware");
 const router = (0, express_1.Router)();
 router.post('/create', (0, validationMiddleware_1.validateData)(usersSchema_1.createUserSchema), users_1.createUser);
+router.post('/login', (0, validationMiddleware_1.validateData)(usersSchema_1.loginUserSchema), users_1.loginUser);
 exports.default = router;
+//# sourceMappingURL=users.js.map

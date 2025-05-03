@@ -2,7 +2,16 @@ import { PrismaClient } from '@prisma/client';
 import bcrypt from 'bcrypt';
 import { Request, Response } from 'express-serve-static-core';
 import { StatusCodes } from 'http-status-codes';
-import { CreateUserRequestBody } from '../types/user/user-requests';
+import {
+  CreateUserRequestBody,
+  LoginUserRequestBody
+} from '../types/user/user-requests';
+import { Session } from 'express-session';
+declare module 'express-session' {
+  interface Session {
+    userId?: number;
+  }
+}
 
 const prisma = new PrismaClient();
 
@@ -31,6 +40,30 @@ export async function createUser(
 
     response.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
       error: 'Failed to create user'
+    });
+  }
+}
+
+export async function loginUser(
+  request: Request<{}, {}, LoginUserRequestBody>,
+  response: Response<{ message: string } | { error: string }>
+) {
+  try {
+    const loggedInUser = await prisma.user.findUnique({
+      where: { email: request.body.email }
+    });
+    if (loggedInUser && request.session) {
+      request.session.userId = loggedInUser.id;
+      response.status(StatusCodes.OK).json({
+        message: 'The user logged in successfully'
+      });
+    } else
+      response.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+        error: 'Session service failed'
+      });
+  } catch (error) {
+    response.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+      error: 'Unexpected error'
     });
   }
 }
