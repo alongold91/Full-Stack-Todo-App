@@ -29,3 +29,20 @@ export function validateData(schema: z.ZodType<any, any, any>) {
     }
   };
 }
+
+export function validateSession(req: Request, res: Response, next: NextFunction) {
+  try {
+    if (req.session && req.session.userId) {
+      next();
+    } else {
+      res.status(StatusCodes.UNAUTHORIZED).json({
+        error: 'Unauthorized',
+        message: 'User session not found'
+      });
+    }
+  } catch (error) {
+    res
+      .status(StatusCodes.INTERNAL_SERVER_ERROR)
+      .json({ error: 'Internal Server Error' });
+  }
+}
