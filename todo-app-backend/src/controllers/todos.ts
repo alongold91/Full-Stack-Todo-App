@@ -36,7 +36,7 @@ export async function updateUserTodo(
   response: Response<{ message: string } | { error: string }>
 ) {
   try {
-    const todos = await prisma.todo.update({
+    await prisma.todo.update({
       where: { id: request.body.todoId, userId: DUMMY_USER_ID },
       data: {content: request.body.newContent}
     });
@@ -46,7 +46,7 @@ export async function updateUserTodo(
       .json({ message: `Todo (add todo id) is updated successfully` });
   } catch (error) {
     response.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-      error: 'Failed to create user'
+      error: 'Failed to update the todo'
     });
   }
 }
