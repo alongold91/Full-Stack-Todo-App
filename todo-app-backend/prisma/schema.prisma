@@ -30,5 +30,4 @@ model Todo {
   isDone    Boolean
   user      User   @relation(fields: [userId], references: [id])
   userId    Int
-  projectId Int
 }

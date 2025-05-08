@@ -62,5 +62,5 @@ exports.loginUserSchema = zod_1.z
         return false;
     const match = yield bcrypt_1.default.compare(data.password, user.password);
     return match;
-}), { message: 'Password is incorrect' });
+}), { path: ['password'], message: 'Password is incorrect' });
 //# sourceMappingURL=usersSchema.js.map

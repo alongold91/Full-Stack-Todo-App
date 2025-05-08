@@ -4,7 +4,7 @@ import { Link } from 'react-router';
 import InputError from '../../../../components/error messages/InputError';
 import { CreateUserData } from '../../../../types/user';
 import classes from '../LoginAndRegister.module.css';
-import { useCreateNewUser } from '../../../../services/mutations';
+import { useCreateNewUser } from '../../../../services/usersMutation';
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router';
 import { z } from 'zod';

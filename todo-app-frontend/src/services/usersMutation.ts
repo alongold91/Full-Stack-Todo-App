@@ -1,6 +1,6 @@
 import { useMutation } from '@tanstack/react-query';
 import { CreateUserData, LoginUserData } from '../types/user';
-import { createNewUser, loginUser } from './api';
+import { createNewUser, loginUser } from './usersApi';
 import { ApiError } from '../types/errors';
 
 export function useCreateNewUser() {

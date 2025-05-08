@@ -1,34 +1,30 @@
-import { useEffect } from 'react'
-import TodosTable from './screens/todos-table/TodosTable'
-import {
-  createBrowserRouter,
-  RouterProvider,
-} from "react-router";
+import { createBrowserRouter, RouterProvider } from 'react-router';
+import OnlineUserProtectedRoute from './components/routing components/OnlineUserProtectedRoute';
+import Login from './screens/login-and-register/login/Login';
+import Register from './screens/login-and-register/login/register/Register';
+import TodosTable from './screens/todos-table/TodosTable';
 
 const router = createBrowserRouter([
   {
-    path: "/",
-    element: <div>Hello World</div>,
+    path: '/',
+    Component: OnlineUserProtectedRoute
   },
+  {
+    path: '/login',
+    Component: Login
+  },
+  {
+    path: '/register',
+    Component: Register
+  },
+  {
+    path: 'todos',
+    Component: TodosTable
+  }
 ]);
 
 function App() {
-  useEffect(() => {
-    fetch('http://localhost:3000/api/users')
-      .then(response => response.json())  // Parse the JSON response
-      .then(userData => {
-        console.log(userData)  // This will log the actual user data
-      })
-      .catch(error => {
-        console.error("Error fetching users:", error)
-      })
-  }, [])
-
-  return (
-    <div>
-      <TodosTable />
-    </div>
-  )
+  return <RouterProvider router={router} />;
 }
 
-export default App
+export default App;

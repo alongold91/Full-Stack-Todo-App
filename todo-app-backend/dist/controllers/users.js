@@ -46,15 +46,14 @@ function loginUser(request, response) {
             const loggedInUser = yield prisma.user.findUnique({
                 where: { email: request.body.email }
             });
-            if (loggedInUser && request.session) {
-                request.session.userId = loggedInUser.id;
+            if (loggedInUser) {
                 response.status(http_status_codes_1.StatusCodes.OK).json({
                     message: 'The user logged in successfully'
                 });
             }
             else
                 response.status(http_status_codes_1.StatusCodes.INTERNAL_SERVER_ERROR).json({
-                    error: 'Session service failed'
+                    error: 'The user was not found'
                 });
         }
         catch (error) {

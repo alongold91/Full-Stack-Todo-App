@@ -6,12 +6,6 @@ import {
   CreateUserRequestBody,
   LoginUserRequestBody
 } from '../types/user/user-requests';
-import { Session } from 'express-session';
-declare module 'express-session' {
-  interface Session {
-    userId?: number;
-  }
-}
 
 const prisma = new PrismaClient();
 
@@ -52,14 +46,13 @@ export async function loginUser(
     const loggedInUser = await prisma.user.findUnique({
       where: { email: request.body.email }
     });
-    if (loggedInUser && request.session) {
-      request.session.userId = loggedInUser.id;
+    if (loggedInUser) {
       response.status(StatusCodes.OK).json({
         message: 'The user logged in successfully'
       });
     } else
       response.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-        error: 'Session service failed'
+        error: 'The user was not found'
       });
   } catch (error) {
     response.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
@@ -67,3 +60,4 @@ export async function loginUser(
     });
   }
 }
+

@@ -1,12 +1,12 @@
-import React, { useEffect } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
-import classes from './LoginAndRegister.module.css';
+import { useEffect } from 'react';
+import { useForm } from 'react-hook-form';
 import { Link, useNavigate } from 'react-router';
 import { z } from 'zod';
-import { LoginUserData } from '../../../types/user';
-import { useForm } from 'react-hook-form';
 import InputError from '../../../components/error messages/InputError';
-import { useLoginUser } from '../../../services/mutations';
+import { useLoginUser } from '../../../services/usersMutation';
+import { LoginUserData } from '../../../types/user';
+import classes from './LoginAndRegister.module.css';
 
 
 export const loginUserSchema = z.object({
@@ -51,7 +51,8 @@ function Login() {
       });
     }
     if (loginUserMutation.isSuccess) {
-      navigate('/Todos');
+      window.sessionStorage.setItem('connectedUser', 'true');
+      navigate('/');
     }
   }, [loginUserMutation.error, loginUserMutation.isSuccess]);
   
