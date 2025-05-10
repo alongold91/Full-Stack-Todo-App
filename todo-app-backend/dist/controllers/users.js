@@ -14,6 +14,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.createUser = createUser;
 exports.loginUser = loginUser;
+exports.createUserAndTodoAsSequentialTransaction = createUserAndTodoAsSequentialTransaction;
+exports.createUserAndTodoAsInteractiveTransaction = createUserAndTodoAsInteractiveTransaction;
 const client_1 = require("@prisma/client");
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const http_status_codes_1 = require("http-status-codes");
@@ -59,6 +61,72 @@ function loginUser(request, response) {
         catch (error) {
             response.status(http_status_codes_1.StatusCodes.INTERNAL_SERVER_ERROR).json({
                 error: 'Unexpected error'
+            });
+        }
+    });
+}
+function createUserAndTodoAsSequentialTransaction(request, response) {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            const [user, todo] = yield prisma.$transaction([
+                prisma.user.create({
+                    data: {
+                        firstName: 'Julian',
+                        lastName: 'The clown',
+                        email: 'JulCr@gmail.com',
+                        password: 'Hello easy password'
+                    }
+                }),
+                prisma.todo.create({
+                    data: {
+                        header: 'Julians welcome todo',
+                        content: 'Hello julians first todo content',
+                        isDone: false,
+                        userId: 59
+                    }
+                })
+            ]);
+            console.log(user);
+            console.log(todo);
+            response.status(http_status_codes_1.StatusCodes.OK).json(Object.assign(Object.assign({}, user), todo));
+        }
+        catch (error) {
+            response.status(http_status_codes_1.StatusCodes.INTERNAL_SERVER_ERROR).json({
+                error: 'Unexpected error with transaction'
+            });
+        }
+    });
+}
+function createUserAndTodoAsInteractiveTransaction(request, response) {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            const result = yield prisma.$transaction((tx) => __awaiter(this, void 0, void 0, function* () {
+                const newUser = yield tx.user.create({
+                    data: {
+                        firstName: 'Harold',
+                        lastName: 'Roblust',
+                        email: 'JulCr@gmail.com',
+                        password: 'Hello easy password'
+                    }
+                });
+                const newTodo = yield tx.todo.create({
+                    data: {
+                        header: `${newUser.firstName} first post`,
+                        content: `${newUser.firstName} ${newUser.lastName}'s first todo `,
+                        isDone: false,
+                        userId: newUser.id
+                    }
+                });
+                return { user: newUser, todo: newTodo };
+            }));
+            console.log(result);
+            response.status(http_status_codes_1.StatusCodes.OK).json({
+                result
+            });
+        }
+        catch (error) {
+            response.status(http_status_codes_1.StatusCodes.INTERNAL_SERVER_ERROR).json({
+                error: 'Unexpected error with transaction'
             });
         }
     });

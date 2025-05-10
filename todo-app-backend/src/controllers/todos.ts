@@ -36,17 +36,36 @@ export async function updateUserTodo(
   response: Response<{ message: string } | { error: string }>
 ) {
   try {
-    await prisma.todo.update({
+    const test = await prisma.todo.update({
       where: { id: request.body.todoId, userId: DUMMY_USER_ID },
-      data: {content: request.body.newContent}
+      data: { content: request.body.newContent }
     });
 
     response
       .status(StatusCodes.OK)
-      .json({ message: `Todo (add todo id) is updated successfully` });
+      .json({ message: `Todo ${request.body.todoId} is updated successfully` });
   } catch (error) {
     response.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
       error: 'Failed to update the todo'
+    });
+  }
+}
+
+export async function deleteUserTodo(
+  request: Request<null, null, { todoId: number }>,
+  response: Response<{ message: string } | { error: string }>
+) {
+  try {
+    const test = await prisma.todo.delete({
+      where: { id: request.body.todoId }
+    });
+
+    response
+      .status(StatusCodes.OK)
+      .json({ message: `Todo ${request.body.todoId} is deleted successfully` });
+  } catch (error) {
+    response.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+      error: 'Failed to delete the todo'
     });
   }
 }

@@ -61,3 +61,83 @@ export async function loginUser(
   }
 }
 
+export async function createUserAndTodoAsSequentialTransaction(
+  request: Request,
+  response: Response
+) {
+  try {
+    const [user, todo] = await prisma.$transaction([
+      prisma.user.create({
+        data: {
+          firstName: 'Julian',
+          lastName: 'The clown',
+          email: 'JulCr@gmail.com',
+          password: 'Hello easy password'
+        }
+      }),
+      prisma.todo.create({
+        data: {
+          header: 'Julians welcome todo',
+          content: 'Hello julians first todo content',
+          isDone: false,
+          userId: 59
+        }
+      })
+    ]);
+    console.log(user);
+    console.log(todo);
+    response.status(StatusCodes.OK).json({
+      ...user,
+      ...todo
+    });
+  } catch (error) {
+    response.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+      error: 'Unexpected error with transaction'
+    });
+  }
+}
+
+export async function createUserAndTodoAsInteractiveTransaction(
+  request: Request,
+  response: Response
+) {
+  try {
+    const result = await prisma.$transaction(
+      async (tx) => {
+        const newUser = await tx.user.create({
+          data: {
+            firstName: 'Harold',
+            lastName: 'Roblust',
+            email: `JulCr_${Date.now()}@gmail.com`, // Add timestamp to prevent duplicates
+            password: 'Hello easy password'
+          }
+        });
+        
+        const newTodo = await tx.todo.create({
+          data: {
+            header: `${newUser.firstName} first post`,
+            content: `${newUser.firstName} ${newUser.lastName}'s first todo `,
+            isDone: false,
+            userId: newUser.id
+          }
+        });
+        
+        return { user: newUser, todo: newTodo };
+      },
+      {
+        // Increase timeout to 15 seconds
+        timeout: 15000,
+      }
+    );
+    
+    console.log(result);
+    response.status(StatusCodes.OK).json({
+      result
+    });
+  } catch (error) {
+    console.error("Transaction error:", error);
+    response.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+      error: error instanceof Error ? error.message : 'Unexpected error with transaction'
+    });
+  }
+}

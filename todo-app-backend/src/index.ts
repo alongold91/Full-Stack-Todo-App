@@ -1,9 +1,13 @@
 import cors from 'cors';
+import dotenv from 'dotenv';
 import express from 'express';
+import pgUsersRouter from './routers/pgUsers';
 import todosRouter from './routers/todos';
 import usersRouter from './routers/users';
 const app = express();
 const PORT = 3000;
+
+dotenv.config();
 
 // Enable CORS for all routes
 app.use(
@@ -22,6 +26,8 @@ app.use(express.json());
 // Route prefix
 app.use('/api/users', usersRouter);
 app.use('/api/todos', todosRouter);
+app.use('/pg/users', pgUsersRouter)
+
 
 app.listen(PORT, () => {
   console.log(`Running on Port ${PORT}`);
