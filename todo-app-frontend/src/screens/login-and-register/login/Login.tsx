@@ -1,5 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useEffect } from 'react';
+import { useContext, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { Link, useNavigate } from 'react-router';
 import { z } from 'zod';
@@ -7,6 +7,7 @@ import InputError from '../../../components/error messages/InputError';
 import { useLoginUser } from '../../../services/usersMutation';
 import { LoginUserData } from '../../../types/user';
 import classes from './LoginAndRegister.module.css';
+import { UserContext } from '../../../App';
 
 
 export const loginUserSchema = z.object({
@@ -40,7 +41,10 @@ function Login() {
     loginUserMutation.mutate(data)
   }
 
+  const {login} = useContext(UserContext)
+
   useEffect(() => {
+    
     if (
       loginUserMutation.error?.response.message ===
       'Password is incorrect'
@@ -52,7 +56,9 @@ function Login() {
     }
     if (loginUserMutation.isSuccess) {
       window.sessionStorage.setItem('connectedUser', 'true');
-      navigate('/');
+      console.log(loginUserMutation.data)
+      login(2);
+      navigate('/2/lists');
     }
   }, [loginUserMutation.error, loginUserMutation.isSuccess]);
   

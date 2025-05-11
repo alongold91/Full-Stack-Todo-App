@@ -4,6 +4,7 @@ import express from 'express';
 import pgUsersRouter from './routers/pgUsers';
 import todosRouter from './routers/todos';
 import usersRouter from './routers/users';
+import listsRouter from './routers/lists'
 const app = express();
 const PORT = 3000;
 
@@ -19,14 +20,16 @@ app.use(
   })
 );
 
+// localhost:4444/lists/4/todos/7
 
 // Parse JSON request bodies
 app.use(express.json());
 
 // Route prefix
 app.use('/api/users', usersRouter);
+app.use('/api/lists', listsRouter)
 app.use('/api/todos', todosRouter);
-app.use('/pg/users', pgUsersRouter)
+// app.use('/pg/users', pgUsersRouter)
 
 
 app.listen(PORT, () => {

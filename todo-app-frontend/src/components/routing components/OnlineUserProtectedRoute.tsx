@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import TodosTable from '../../screens/todos-table/TodosTable';
+import UserLists from '../../screens/user-lists/UserLists';
 import ProtectedRoute from './ProtectedRoute';
 
 function OnlineUserProtectedRoute() {
@@ -25,7 +25,7 @@ function OnlineUserProtectedRoute() {
 
   return (
     <ProtectedRoute condition={isOnline} alternativeRoute={'/login'}>
-      <TodosTable />
+      <UserLists />
     </ProtectedRoute>
   );
 }

@@ -56,7 +56,7 @@ function Register() {
     ) {
       setError('email', {
         type: 'manual',
-        message: createNewUserMutation.error?.response.message
+        message: createNewUserMutation.error.response.message
       });
     }
     if (createNewUserMutation.isSuccess) {

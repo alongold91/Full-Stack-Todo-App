@@ -1,0 +1,7 @@
+.container {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr); /* Creates 5 equal columns */
+    gap: 20px; /* Adds space between grid items - adjust as needed */
+    width: 100%; /* Makes container take full width of parent */
+    padding: 20px; /* Optional - adds padding inside container */
+  }

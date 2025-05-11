@@ -1,8 +1,6 @@
 import { Router } from 'express';
 import {
   createUser,
-  createUserAndTodoAsInteractiveTransaction,
-  createUserAndTodoAsSequentialTransaction,
   loginUser
 } from '../controllers/users';
 import {
@@ -15,13 +13,5 @@ const router = Router();
 
 router.post('/create', validateData(createUserSchema), createUser);
 router.post('/login', validateData(loginUserSchema), loginUser);
-router.post(
-  '/create-user-and-todo-sequential-transaction',
-  createUserAndTodoAsSequentialTransaction
-);
-router.post(
-  '/create-user-and-todo-interactive-transaction',
-  createUserAndTodoAsInteractiveTransaction
-);
 
 export default router;

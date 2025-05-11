@@ -6,8 +6,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const cors_1 = __importDefault(require("cors"));
 const dotenv_1 = __importDefault(require("dotenv"));
 const express_1 = __importDefault(require("express"));
-const pgUsers_1 = __importDefault(require("./routers/pgUsers"));
-const todos_1 = __importDefault(require("./routers/todos"));
 const users_1 = __importDefault(require("./routers/users"));
 const app = (0, express_1.default)();
 const PORT = 3000;
@@ -23,8 +21,6 @@ app.use((0, cors_1.default)({
 app.use(express_1.default.json());
 // Route prefix
 app.use('/api/users', users_1.default);
-app.use('/api/todos', todos_1.default);
-app.use('/pg/users', pgUsers_1.default);
 app.listen(PORT, () => {
     console.log(`Running on Port ${PORT}`);
 });

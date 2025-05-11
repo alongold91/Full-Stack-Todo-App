@@ -12,7 +12,6 @@ export function useCreateNewUser() {
       ) {
         error.response.message = 'Email is already in use';
       }
-      throw error;
     }
   });
 }

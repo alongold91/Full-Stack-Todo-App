@@ -14,8 +14,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.createUser = createUser;
 exports.loginUser = loginUser;
-exports.createUserAndTodoAsSequentialTransaction = createUserAndTodoAsSequentialTransaction;
-exports.createUserAndTodoAsInteractiveTransaction = createUserAndTodoAsInteractiveTransaction;
 const client_1 = require("@prisma/client");
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const http_status_codes_1 = require("http-status-codes");
@@ -50,7 +48,7 @@ function loginUser(request, response) {
             });
             if (loggedInUser) {
                 response.status(http_status_codes_1.StatusCodes.OK).json({
-                    message: 'The user logged in successfully'
+                    id: loggedInUser.id
                 });
             }
             else
@@ -65,70 +63,80 @@ function loginUser(request, response) {
         }
     });
 }
-function createUserAndTodoAsSequentialTransaction(request, response) {
-    return __awaiter(this, void 0, void 0, function* () {
-        try {
-            const [user, todo] = yield prisma.$transaction([
-                prisma.user.create({
-                    data: {
-                        firstName: 'Julian',
-                        lastName: 'The clown',
-                        email: 'JulCr@gmail.com',
-                        password: 'Hello easy password'
-                    }
-                }),
-                prisma.todo.create({
-                    data: {
-                        header: 'Julians welcome todo',
-                        content: 'Hello julians first todo content',
-                        isDone: false,
-                        userId: 59
-                    }
-                })
-            ]);
-            console.log(user);
-            console.log(todo);
-            response.status(http_status_codes_1.StatusCodes.OK).json(Object.assign(Object.assign({}, user), todo));
-        }
-        catch (error) {
-            response.status(http_status_codes_1.StatusCodes.INTERNAL_SERVER_ERROR).json({
-                error: 'Unexpected error with transaction'
-            });
-        }
-    });
-}
-function createUserAndTodoAsInteractiveTransaction(request, response) {
-    return __awaiter(this, void 0, void 0, function* () {
-        try {
-            const result = yield prisma.$transaction((tx) => __awaiter(this, void 0, void 0, function* () {
-                const newUser = yield tx.user.create({
-                    data: {
-                        firstName: 'Harold',
-                        lastName: 'Roblust',
-                        email: 'JulCr@gmail.com',
-                        password: 'Hello easy password'
-                    }
-                });
-                const newTodo = yield tx.todo.create({
-                    data: {
-                        header: `${newUser.firstName} first post`,
-                        content: `${newUser.firstName} ${newUser.lastName}'s first todo `,
-                        isDone: false,
-                        userId: newUser.id
-                    }
-                });
-                return { user: newUser, todo: newTodo };
-            }));
-            console.log(result);
-            response.status(http_status_codes_1.StatusCodes.OK).json({
-                result
-            });
-        }
-        catch (error) {
-            response.status(http_status_codes_1.StatusCodes.INTERNAL_SERVER_ERROR).json({
-                error: 'Unexpected error with transaction'
-            });
-        }
-    });
-}
+// export async function createUserAndTodoAsSequentialTransaction(
+//   request: Request,
+//   response: Response
+// ) {
+//   try {
+//     const [user, todo] = await prisma.$transaction([
+//       prisma.user.create({
+//         data: {
+//           firstName: 'Julian',
+//           lastName: 'The clown',
+//           email: 'JulCr@gmail.com',
+//           password: 'Hello easy password'
+//         }
+//       }),
+//       prisma.todo.create({
+//         data: {
+//           header: 'Julians welcome todo',
+//           content: 'Hello julians first todo content',
+//           isDone: false,
+//           userId: 59
+//         }
+//       })
+//     ]);
+//     console.log(user);
+//     console.log(todo);
+//     response.status(StatusCodes.OK).json({
+//       ...user,
+//       ...todo
+//     });
+//   } catch (error) {
+//     response.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+//       error: 'Unexpected error with transaction'
+//     });
+//   }
+// }
+// export async function createUserAndTodoAsInteractiveTransaction(
+//   request: Request,
+//   response: Response
+// ) {
+//   try {
+//     const result = await prisma.$transaction(
+//       async (tx) => {
+//         const newUser = await tx.user.create({
+//           data: {
+//             firstName: 'Harold',
+//             lastName: 'Roblust',
+//             email: `JulCr_${Date.now()}@gmail.com`,
+//             password: 'Hello easy password'
+//           }
+//         });
+//         const newTodo = await tx.todo.create({
+//           data: {
+//             header: `${newUser.firstName} first post`,
+//             content: `${newUser.firstName} ${newUser.lastName}'s first todo `,
+//             isDone: false,
+//             userId: newUser.id
+//           }
+//         });
+//         return { user: newUser, todo: newTodo };
+//       },
+//       {
+//         // Increase timeout to 15 seconds
+//         timeout: 15000,
+//       }
+//     );
+//     console.log(result);
+//     response.status(StatusCodes.OK).json({
+//       result
+//     });
+//   } catch (error) {
+//     console.error("Transaction error:", error);
+//     response.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+//       error: error instanceof Error ? error.message : 'Unexpected error with transaction'
+//     });
+//   }
+// }
 //# sourceMappingURL=users.js.map
