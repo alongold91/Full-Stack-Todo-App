@@ -20,7 +20,7 @@ const router = createBrowserRouter([
   },
   {
     path: '/:userId/lists',
-    Component: UserLists // You'll need to create this component
+    Component: UserLists
   }
   // {
   //   path: 'todos',
