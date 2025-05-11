@@ -1,7 +1,6 @@
 import cors from 'cors';
 import dotenv from 'dotenv';
 import express from 'express';
-import pgUsersRouter from './routers/pgUsers';
 import todosRouter from './routers/todos';
 import usersRouter from './routers/users';
 import listsRouter from './routers/lists'
@@ -29,7 +28,6 @@ app.use(express.json());
 app.use('/api/users', usersRouter);
 app.use('/api/lists', listsRouter)
 app.use('/api/todos', todosRouter);
-// app.use('/pg/users', pgUsersRouter)
 
 
 app.listen(PORT, () => {
